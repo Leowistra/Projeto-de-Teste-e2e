@@ -1,6 +1,8 @@
 class produtosPage {
 
-
+    visitarUrl() {
+        cy.visit('/produtos')
+    }
 
     buscarProdutoLista(nomeProduto) {
         cy.get('.products > .row').contains(nomeProduto).click()
@@ -11,9 +13,6 @@ class produtosPage {
         cy.get(`.button-variable-item-${cor}`).click();
         cy.get('.input-text').clear().type(quantidade);
         cy.get('.single_add_to_cart_button').click()
-        cy.get('.variations > tbody > :nth-child(1)' + tamanho).click()
-
-
     }
 
 }
