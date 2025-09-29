@@ -10,45 +10,46 @@ context('Exercicio - Testes End-to-end - Fluxo de pedido', () => {
         Preenchendo todas opções no checkout
         E validando minha compra ao final */
 
-    beforeEach(() => {
-        cy.visit('/')
-        cy.get('#primary-menu > .menu-item-629 > a').click()
-    });
 
-    afterEach(() => {
+    it('Deve fazer um pedido na loja Ebac Shop de ponta a ponta', () => {
+        ///Login no site
+        cy.visit('minha-conta')
+        cy.login('leow.teste@teste.com.br', 'teste@123')
+        cy.get('.woocommerce-MyAccount-content > :nth-child(2)').should('contain', 'leow.qa')
         cy.get('#primary-menu > .menu-item-629 > a').click()
-    });
-    it('Deve fazer um pedido na loja Ebac Shop de ponta a ponta'), () => {
-
-    };
-    it('Adição do primeiro produto no carrinho', () => {
+        ///Adição do primeiro produto
         produtosPage.buscarProdutoLista('Ajax Full-Zip Sweatshirt');
         produtosPage.addProdutoCarrinho('L', 'Red', 1);
-        cy.get('.woocommerce-message').should('contain', 'Ajax Full-Zip Sweatshirt');
-    });
-    it('Adição do segundo produto no carrinho', () => {
+        cy.get('.woocommerce-message').should('contain', '“Ajax Full-Zip Sweatshirt” foi adicionado no seu carrinho.')
+        cy.get('#primary-menu > .menu-item-629 > a').click()
+        ///Adição do segundo produto
         cy.fixture('produtos').then(dados => {
             const produto = dados[0];
             produtosPage.buscarProdutoLista(produto.nomeProduto);
             produtosPage.addProdutoCarrinho(produto.tamanho, produto.cor, produto.quantidade);
             cy.get('.woocommerce-message').should('contain', produto.nomeProduto);
         });
-    });
-    it('Adição do terceiro produto no carrinho', () => {
+        cy.get('#primary-menu > .menu-item-629 > a').click()
+        ///Adição do terceiro produto
         cy.fixture('produtos').then(dados => {
             const produto = dados[1];
             produtosPage.buscarProdutoLista(produto.nomeProduto);
             produtosPage.addProdutoCarrinho(produto.tamanho, produto.cor, produto.quantidade);
             cy.get('.woocommerce-message').should('contain', produto.nomeProduto);
         });
-    });
-    it('Adição do quarto produto no carrinho', () => {
+        cy.get('#primary-menu > .menu-item-629 > a').click()
+        ///Adição do quarto produto
         cy.fixture('produtos').then(dados => {
             const produto = dados[2];
             produtosPage.buscarProdutoLista(produto.nomeProduto);
             produtosPage.addProdutoCarrinho(produto.tamanho, produto.cor, produto.quantidade);
             cy.get('.woocommerce-message').should('contain', produto.nomeProduto);
         });
+        cy.get('.woocommerce-message > .button').click()
+        ///Finalização do pedido e preenchimento do formulário de Checkout
+        cy.get('.checkout-button').click()
+        cy.formularioCheckout('Leonardo', 'Wistra', 'Brasil', 'Rua. Joao Jose', '33', 'São Paulo', 'São Paulo', '00000-010', '11 99999-9999', 'leow.teste@teste.com.br')
+        cy.get('.woocommerce-notice', { timeout: 10000 }).should('contain', 'Obrigado. Seu pedido foi recebido.')
     });
 })
 
